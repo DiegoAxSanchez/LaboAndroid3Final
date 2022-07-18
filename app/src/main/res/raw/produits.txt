@@ -1,0 +1,10 @@
+Coca-Cola;Boissons;2.00;80
+Pepsi;Boissons;1.50;60
+Iced Tea;Boissons;5;13
+Eau Eska;Boissons;1;50
+Eau Nestle;Boissons;.5;20
+Ketchup;Condiments;6;10
+Moutarde;Condiments;5;8
+Steak;Viandes;15;10
+Steak Wagyu;50;5
+Poisson frais;12;4

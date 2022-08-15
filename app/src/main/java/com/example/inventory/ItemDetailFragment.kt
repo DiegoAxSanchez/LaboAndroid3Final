@@ -58,7 +58,6 @@ class ItemDetailFragment : Fragment() {
             itemPrice.text = item.price.toString()
             itemCount.text = item.quantity.toString()
             deleteItem.setOnClickListener { showConfirmationDialog() }
-            editItem.setOnClickListener { editItem() }
         }
     }
 

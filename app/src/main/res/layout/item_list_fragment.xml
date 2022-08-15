@@ -97,13 +97,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@android:color/white" />
+
+    <TextView
+        android:id="@+id/spinner_label"
+        style="@style/Widget.Inventory.Header"
+        android:text="Categories"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:translationY="20dp"
+        app:layout_constraintEnd_toStartOf="@id/btn_total"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/category_spinner"/>
+
     <Spinner
         android:id="@+id/category_spinner"
-        android:layout_width="160dp"
-        android:layout_height="72dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="180dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="4dp"
+        android:contentDescription="CATEGORIES"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_total"

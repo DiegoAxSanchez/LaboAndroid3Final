@@ -69,12 +69,14 @@ class ItemListFragment : Fragment() {
             items.let {
                 adapter.submitList(it)
             }
-        categories = MainActivity.itemsDBHelper.readAllCategories()
-                categories.let {
-                    // Create an ArrayAdapter using the string array and a default spinner layout
-                    binding.categorySpinner.adapter =
-                        ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it)
-                    }
+
+            categories = listOf<String>("") + MainActivity.itemsDBHelper.readAllCategories()
+            categories.let {
+                // Create an ArrayAdapter using the string array and a default spinner layout
+                binding.categorySpinner.adapter =
+                    ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it)
+            }
+
 
         binding.floatingActionButton.setOnClickListener {
             val action = ItemListFragmentDirections.actionItemListFragmentToAddItemFragment(
@@ -99,13 +101,16 @@ class ItemListFragment : Fragment() {
                 id: Long
             ) {
                 if (parentView != null) {
+                    if (position != 0 ) {
 
-                    items = MainActivity.itemsDBHelper.searchByCategory(parentView.getItemAtPosition(position) as String)
-                    items.let {
-                        val newFragment = CategoryFragment(items)
-                        newFragment.show(parentFragmentManager, "category")
+                        items = MainActivity.itemsDBHelper.searchByCategory(
+                            parentView.getItemAtPosition(position) as String
+                        )
+                        items.let {
+                            val newFragment = CategoryFragment(items)
+                            newFragment.show(parentFragmentManager, "category")
+                        }
                     }
-
                 }
             }
 

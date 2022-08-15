@@ -4,25 +4,18 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Parcel
-import android.os.Parcelable
-import android.view.View
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.activityViewModels
-import com.example.inventory.data.Item
-import com.example.inventory.databinding.ItemListFragmentBinding
-import kotlinx.coroutines.NonCancellable.cancel
-import kotlinx.coroutines.NonCancellable.start
+import com.example.inventory.data.ItemModel
 import java.text.NumberFormat
 
-class TotalFragment(val allItems: List<Item>) : DialogFragment() {
+class TotalFragment(private val allItems: List<ItemModel>) : DialogFragment() {
 
-   var total: Double = 0.0
+   private var total: Double = 0.0
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         for (item in allItems){
-            total += item.itemPrice.toDouble()*item.quantityInStock.toDouble()
+            total += item.price *item.quantity.toDouble()
         }
 
 
@@ -31,7 +24,7 @@ class TotalFragment(val allItems: List<Item>) : DialogFragment() {
             val builder = AlertDialog.Builder(it)
 
             builder.setMessage("Le Total est ${NumberFormat.getCurrencyInstance().format(total)}\$")
-                .setNeutralButton("OK" ,DialogInterface.OnClickListener { dialog, id ->
+                .setNeutralButton("OK" , { dialog, id ->
                 // START THE GAME!
             })
             // Create the AlertDialog object and return it

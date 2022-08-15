@@ -27,9 +27,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.inventory.data.Item
+import com.example.inventory.data.ItemModel
 import com.example.inventory.databinding.FragmentAddItemBinding
-import com.google.android.material.snackbar.Snackbar
 
 /**
  * Fragment to add or update an item in the Inventory database.
@@ -38,15 +37,9 @@ class AddItemFragment : Fragment() {
 
     // Use the 'by activityViewModels()' Kotlin property delegate from the fragment-ktx artifact
     // to share the ViewModel across fragments.
-    private val viewModel: InventoryViewModel by activityViewModels {
-        InventoryViewModelFactory(
-            (activity?.application as InventoryApplication).database
-                .itemDao()
-        )
-    }
     private val navigationArgs: ItemDetailFragmentArgs by navArgs()
 
-    lateinit var item: Item
+    lateinit var item: ItemModel
 
     // Binding object instance corresponding to the fragment_add_item.xml layout
     // This property is non-null between the onCreateView() and onDestroyView() lifecycle callbacks,
@@ -67,7 +60,7 @@ class AddItemFragment : Fragment() {
      * Returns true if the EditTexts are not empty
      */
     private fun isEntryValid(): Boolean {
-        return viewModel.isEntryValid(
+        return com.example.inventory.data.isEntryValid(
             binding.itemName.text.toString(),
             binding.itemCategory.text.toString(),
             binding.itemPrice.text.toString(),
@@ -78,13 +71,13 @@ class AddItemFragment : Fragment() {
     /**
      * Binds views with the passed in [item] information.
      */
-    private fun bind(item: Item) {
-        val price = "%.2f".format(item.itemPrice)
+    private fun bind(item: ItemModel) {
+        val price = "%.2f".format(item.price)
         binding.apply {
-            itemName.setText(item.itemName, TextView.BufferType.SPANNABLE)
-            itemCategory.setText(item.itemCategory, TextView.BufferType.SPANNABLE)
+            itemName.setText(item.name, TextView.BufferType.SPANNABLE)
+            itemCategory.setText(item.category, TextView.BufferType.SPANNABLE)
             itemPrice.setText(price, TextView.BufferType.SPANNABLE)
-            itemCount.setText(item.quantityInStock.toString(), TextView.BufferType.SPANNABLE)
+            itemCount.setText(item.quantity.toString(), TextView.BufferType.SPANNABLE)
             saveAction.setOnClickListener { updateItem() }
         }
     }
@@ -94,11 +87,13 @@ class AddItemFragment : Fragment() {
      */
     private fun addNewItem() {
         if (isEntryValid()) {
-            viewModel.addNewItem(
+            MainActivity.itemsDBHelper.insertItem(
+                ItemModel(
+                    null,
                 binding.itemName.text.toString(),
                 binding.itemCategory.text.toString(),
-                binding.itemPrice.text.toString(),
-                binding.itemCount.text.toString(),
+                binding.itemPrice.text.toString().toDouble(),
+                binding.itemCount.text.toString().toInt(),)
             )
             val action = AddItemFragmentDirections.actionAddItemFragmentToItemListFragment()
             findNavController().navigate(action)
@@ -111,12 +106,14 @@ class AddItemFragment : Fragment() {
      */
     private fun updateItem() {
         if (isEntryValid()) {
-            viewModel.updateItem(
+            MainActivity.itemsDBHelper.insertItem(
+                ItemModel(
                 this.navigationArgs.itemId,
                 this.binding.itemName.text.toString(),
                 this.binding.itemCategory.text.toString(),
-                this.binding.itemPrice.text.toString(),
-                this.binding.itemCount.text.toString()
+                this.binding.itemPrice.text.toString().toDouble(),
+                this.binding.itemCount.text.toString().toInt()
+                )
             )
             val action = AddItemFragmentDirections.actionAddItemFragmentToItemListFragment()
             findNavController().navigate(action)
@@ -134,10 +131,9 @@ class AddItemFragment : Fragment() {
 
         val id = navigationArgs.itemId
         if (id > 0) {
-            viewModel.retrieveItem(id).observe(this.viewLifecycleOwner) { selectedItem ->
-                item = selectedItem
-                bind(item)
-            }
+            item = MainActivity.itemsDBHelper.readItem(id)[0]
+            bind(item)
+
         } else {
             binding.saveAction.setOnClickListener {
                 addNewItem()

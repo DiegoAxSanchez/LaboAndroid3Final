@@ -23,25 +23,20 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.inventory.data.ItemModel
 import com.example.inventory.databinding.ItemListFragmentBinding
-import java.io.*
-import java.util.*
 
 /**
  * Main fragment displaying details for all items in the database.
  */
 class ItemListFragment : Fragment() {
-    private val viewModel: InventoryViewModel by activityViewModels {
-        InventoryViewModelFactory(
-            (activity?.application as InventoryApplication).database.itemDao()
-        )
-    }
 
     private var _binding: ItemListFragmentBinding? = null
     private val binding get() = _binding!!
+    lateinit var items : List<ItemModel>
+    lateinit var categories : List<String>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,26 +57,24 @@ class ItemListFragment : Fragment() {
 
         val adapter = ItemListAdapter {
             val action =
-                ItemListFragmentDirections.actionItemListFragmentToItemDetailFragment(it.id)
+                ItemListFragmentDirections.actionItemListFragmentToItemDetailFragment(it.id!!)
             this.findNavController().navigate(action)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(this.context)
         binding.recyclerView.adapter = adapter
         // Attach an observer on the allItems list to update the UI automatically when the data
         // changes.
-        viewModel.allItems.observe(this.viewLifecycleOwner) { items ->
+
+        items = MainActivity.itemsDBHelper.readAllItems()
             items.let {
                 adapter.submitList(it)
             }
-
-            viewModel.allCategories.observe(this.viewLifecycleOwner) { categories ->
+        categories = MainActivity.itemsDBHelper.readAllCategories()
                 categories.let {
                     // Create an ArrayAdapter using the string array and a default spinner layout
                     binding.categorySpinner.adapter =
                         ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, it)
-                }
-            }
-        }
+                    }
 
         binding.floatingActionButton.setOnClickListener {
             val action = ItemListFragmentDirections.actionItemListFragmentToAddItemFragment(
@@ -90,11 +83,11 @@ class ItemListFragment : Fragment() {
             this.findNavController().navigate(action)
         }
         binding.btnTotal.setOnClickListener {
-            viewModel.allItems.observe(this.viewLifecycleOwner) { items ->
+            items = MainActivity.itemsDBHelper.readAllItems()
                 items.let {
                     val newFragment = TotalFragment(items)
                     newFragment.show(parentFragmentManager, "total")
-                }
+
             }
         }
         binding.categorySpinner.onItemSelectedListener= object :
@@ -107,13 +100,12 @@ class ItemListFragment : Fragment() {
             ) {
                 if (parentView != null) {
 
-                    viewModel.searchByCategory(parentView.getItemAtPosition(position) as String)
-                        .observe(viewLifecycleOwner) { items ->
-                            items.let {
-                                val newFragment = CategoryFragment(items)
-                                newFragment.show(parentFragmentManager, "category")
-                            }
-                        }
+                    items = MainActivity.itemsDBHelper.searchByCategory(parentView.getItemAtPosition(position) as String)
+                    items.let {
+                        val newFragment = CategoryFragment(items)
+                        newFragment.show(parentFragmentManager, "category")
+                    }
+
                 }
             }
 

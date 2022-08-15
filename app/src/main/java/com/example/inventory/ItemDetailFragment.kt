@@ -24,8 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.inventory.data.Item
-import com.example.inventory.data.getFormattedPrice
+import com.example.inventory.data.ItemModel
 import com.example.inventory.databinding.FragmentItemDetailBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -34,13 +33,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  */
 class ItemDetailFragment : Fragment() {
     private val navigationArgs: ItemDetailFragmentArgs by navArgs()
-    lateinit var item: Item
+    lateinit var item: ItemModel
 
-    private val viewModel: InventoryViewModel by activityViewModels {
-        InventoryViewModelFactory(
-            (activity?.application as InventoryApplication).database.itemDao()
-        )
-    }
 
     private var _binding: FragmentItemDetailBinding? = null
     private val binding get() = _binding!!
@@ -57,14 +51,12 @@ class ItemDetailFragment : Fragment() {
     /**
      * Binds views with the passed in item data.
      */
-    private fun bind(item: Item) {
+    private fun bind(item: ItemModel) {
         binding.apply {
-            itemName.text = item.itemName
-            itemCategory.text = item.itemCategory
-            itemPrice.text = item.getFormattedPrice()
-            itemCount.text = item.quantityInStock.toString()
-            sellItem.isEnabled = viewModel.isStockAvailable(item)
-            sellItem.setOnClickListener { viewModel.sellItem(item) }
+            itemName.text = item.name
+            itemCategory.text = item.category
+            itemPrice.text = item.price.toString()
+            itemCount.text = item.quantity.toString()
             deleteItem.setOnClickListener { showConfirmationDialog() }
             editItem.setOnClickListener { editItem() }
         }
@@ -74,11 +66,15 @@ class ItemDetailFragment : Fragment() {
      * Navigate to the Edit item screen.
      */
     private fun editItem() {
-        val action = ItemDetailFragmentDirections.actionItemDetailFragmentToAddItemFragment(
-            getString(R.string.edit_fragment_title),
-            item.id
-        )
-        this.findNavController().navigate(action)
+        val action = item.id?.let {
+            ItemDetailFragmentDirections.actionItemDetailFragmentToAddItemFragment(
+                getString(R.string.edit_fragment_title),
+                it
+            )
+        }
+        if (action != null) {
+            this.findNavController().navigate(action)
+        }
     }
 
     /**
@@ -100,7 +96,7 @@ class ItemDetailFragment : Fragment() {
      * Deletes the current item and navigates to the list fragment.
      */
     private fun deleteItem() {
-        viewModel.deleteItem(item)
+        item.id?.let { MainActivity.itemsDBHelper.deleteItem(it.toString()) }
         findNavController().navigateUp()
     }
 
@@ -110,10 +106,8 @@ class ItemDetailFragment : Fragment() {
         // Retrieve the item details using the itemId.
         // Attach an observer on the data (instead of polling for changes) and only update the
         // the UI when the data actually changes.
-        viewModel.retrieveItem(id).observe(this.viewLifecycleOwner) { selectedItem ->
-            item = selectedItem
-            bind(item)
-        }
+        item = MainActivity.itemsDBHelper.readItem(id)[0]
+        bind(item)
     }
 
     /**

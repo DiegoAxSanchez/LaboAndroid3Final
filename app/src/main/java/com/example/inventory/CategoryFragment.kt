@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.inventory.data.Item
+import com.example.inventory.data.ItemModel
 import com.example.inventory.databinding.CategoryDialogBinding
 
 
-class CategoryFragment (val allItems: List<Item>) : DialogFragment() {
+class CategoryFragment (private val allItems: List<ItemModel>) : DialogFragment() {
     private var _binding: CategoryDialogBinding? = null
     private val binding get() = _binding!!
 

@@ -110,6 +110,7 @@ class ItemListFragment : Fragment() {
                             val newFragment = CategoryFragment(items)
                             newFragment.show(parentFragmentManager, "category")
                         }
+                    binding.categorySpinner.setSelection(0)
                     }
                 }
             }

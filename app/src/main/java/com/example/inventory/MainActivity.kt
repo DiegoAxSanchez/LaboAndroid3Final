@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         setupActionBarWithNavController(this, navController)
 
         itemsDBHelper = ItemsDBHelper(this)
-        itemsDBHelper.populateDB()
+
     }
 
 

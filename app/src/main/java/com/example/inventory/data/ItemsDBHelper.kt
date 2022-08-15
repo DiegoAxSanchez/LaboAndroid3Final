@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_ENTRIES)
+        populateDB(db)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -179,9 +180,9 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         return items
     }
 
-    fun populateDB(){
+    fun populateDB(db : SQLiteDatabase){
         // Gets the data repository in write mode
-        val db = writableDatabase
+
         val item1 = ItemModel(1, "Coke", "Drink", 1.50, 30)
         val item2 = ItemModel(2, "Pepsi", "Drink", 1.45, 25)
         val item3 = ItemModel(3, "Beef", "Food", 6.50, 5)

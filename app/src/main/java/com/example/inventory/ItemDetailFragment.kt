@@ -55,7 +55,7 @@ class ItemDetailFragment : Fragment() {
         binding.apply {
             itemName.text = item.name
             itemCategory.text = item.category
-            itemPrice.text = item.price.toString()
+            itemPrice.text = com.example.inventory.data.getFormattedPrice(item.price)
             itemCount.text = item.quantity.toString()
             deleteItem.setOnClickListener { showConfirmationDialog() }
         }

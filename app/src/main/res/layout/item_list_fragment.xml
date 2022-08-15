@@ -56,6 +56,8 @@
     <TextView
         android:id="@+id/item_quantity"
         style="@style/Widget.Inventory.Header"
+        android:layout_width="69dp"
+        android:layout_height="23dp"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/margin_between_elements"
         android:text="@string/quantity_in_stock"

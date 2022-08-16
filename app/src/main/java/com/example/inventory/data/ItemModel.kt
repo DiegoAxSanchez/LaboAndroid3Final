@@ -1,7 +1,5 @@
 package com.example.inventory.data
 
-import androidx.room.ColumnInfo
-import androidx.room.PrimaryKey
 import java.text.NumberFormat
 
 class ItemModel(
@@ -11,6 +9,7 @@ class ItemModel(
     val price : Double,
     val quantity: Int,
     )
+
 
     fun isEntryValid(
         itemName: String,

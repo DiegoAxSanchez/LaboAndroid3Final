@@ -189,8 +189,9 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         val item4 = ItemModel(4, "Fish", "Food", 7.75, 8)
         val item5 = ItemModel(5,"Chicken","Food",4.50,12)
         val item6 = ItemModel(6,"BBQ","Tools", 60.50, 2)
+        val item7 = ItemModel(7, "Charcoal", "Tools", 5.65, 20 )
 
-        val initialList : List<ItemModel> = listOf<ItemModel>(item1,item2,item3,item4,item5,item6)
+        val initialList : List<ItemModel> = listOf<ItemModel>(item1,item2,item3,item4,item5,item6,item7)
 
         for (item in initialList) {
             // Create a new map of values, where column names are the keys
@@ -208,7 +209,7 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
     companion object {
         // If you change the database schema, you must increment the database version.
         val DATABASE_VERSION = 1
-        val DATABASE_NAME = "Items"
+        val DATABASE_NAME = "ItemsDB"
 
         private val SQL_CREATE_ENTRIES =
             "CREATE TABLE IF NOT EXISTS " + DBContract.ItemEntry.TABLE_NAME + " (" +

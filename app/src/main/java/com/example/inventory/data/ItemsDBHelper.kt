@@ -127,7 +127,7 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         val db = writableDatabase
         var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery("select * from " + DBContract.ItemEntry.TABLE_NAME + " WHERE " + DBContract.ItemEntry.COLUMN_DEPART + " ='"+category+"'", null)
+            cursor = db.rawQuery("select * from " + DBContract.ItemEntry.TABLE_NAME + " WHERE " + DBContract.ItemEntry.COLUMN_DEPART + " ='"+category+"' GROUP BY "+DBContract.ItemEntry.COLUMN_TRANSPORTEUR, null)
         } catch (e: SQLiteException) {
             db.execSQL(SQL_CREATE_ENTRIES)
             return ArrayList()

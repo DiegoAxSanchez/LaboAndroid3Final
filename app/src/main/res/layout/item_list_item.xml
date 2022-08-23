@@ -25,57 +25,53 @@
     <TextView
         android:id="@+id/item_name"
         style="@style/Widget.Inventory.ListItemTextView"
-        android:layout_width="140dp"
+        android:layout_width="40dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/margin_between_elements"
         android:fontFamily="sans-serif"
-        app:layout_constraintEnd_toStartOf="@+id/item_category"
-        app:layout_constraintStart_toEndOf="@id/item_quantity"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        tools:text="Cogs and Widgetshuihihuihuihuihuihui" />
+        tools:text="Code" />
 
     <TextView
         android:id="@+id/item_category"
         style="@style/Widget.Inventory.ListItemTextView"
-        android:layout_width="70dp"
+        android:layout_width="100dp"
+        android:layout_marginStart="2dp"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/margin_between_elements"
         android:fontFamily="sans-serif"
         android:textAlignment="center"
         app:layout_constraintStart_toEndOf="@id/item_name"
-        app:layout_constraintEnd_toStartOf="@id/item_price"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="1"
-        tools:text="Toolsiohjo" />
+        tools:text="DEPART" />
 
     <TextView
         android:id="@+id/item_price"
         style="@style/Widget.Inventory.ListItemTextView"
-        android:layout_width="60dp"
+        android:layout_width="100dp"
+        android:layout_marginStart="2dp"
         android:layout_height="match_parent"
         android:layout_below="@+id/item_name"
-        android:layout_marginStart="@dimen/margin_between_elements"
-        android:layout_marginEnd="@dimen/margin_between_elements"
         android:fontFamily="sans-serif-medium"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintStart_toEndOf="@+id/item_category"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="$1000" />
+        tools:text="DESTINATION" />
 
     <TextView
         android:id="@+id/item_quantity"
         style="@style/Widget.Inventory.ListItemTextView"
-        android:layout_width="50dp"
+        android:layout_width="100dp"
+        android:layout_marginStart="2dp"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:fontFamily="sans-serif-medium"
         android:textAlignment="textStart"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/item_price"
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="300" />
+        tools:text="TRNASPORTEUR" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

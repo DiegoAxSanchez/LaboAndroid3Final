@@ -20,15 +20,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.inventory.data.ItemModel
+import com.example.inventory.data.VolModel
 import com.example.inventory.databinding.ItemListItemBinding
 
 /**
  * [ListAdapter] implementation for the recyclerview.
  */
 
-class ItemListAdapter(private val onItemClicked: (ItemModel) -> Unit) :
-    ListAdapter<ItemModel, ItemListAdapter.ItemViewHolder>(DiffCallback) {
+class ItemListAdapter(private val onItemClicked: (VolModel) -> Unit) :
+    ListAdapter<VolModel, ItemListAdapter.ItemViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         return ItemViewHolder(
@@ -51,22 +51,22 @@ class ItemListAdapter(private val onItemClicked: (ItemModel) -> Unit) :
     class ItemViewHolder(private var binding: ItemListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: ItemModel) {
-            binding.itemName.text = item.name
-            binding.itemCategory.text = item.category
-            binding.itemPrice.text = com.example.inventory.data.getFormattedPrice(item.price)
-            binding.itemQuantity.text = item.quantity.toString()
+        fun bind(item: VolModel) {
+            binding.itemName.text = item.code.toString()
+            binding.itemCategory.text = item.depart
+            binding.itemPrice.text = item.destination
+            binding.itemQuantity.text = item.transporteur
         }
     }
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<ItemModel>() {
-            override fun areItemsTheSame(oldItem: ItemModel, newItem: ItemModel): Boolean {
+        private val DiffCallback = object : DiffUtil.ItemCallback<VolModel>() {
+            override fun areItemsTheSame(oldItem: VolModel, newItem: VolModel): Boolean {
                 return oldItem === newItem
             }
 
-            override fun areContentsTheSame(oldItem: ItemModel, newItem: ItemModel): Boolean {
-                return oldItem.name == newItem.name
+            override fun areContentsTheSame(oldItem: VolModel, newItem: VolModel): Boolean {
+                return oldItem.destination == newItem.destination
             }
         }
     }

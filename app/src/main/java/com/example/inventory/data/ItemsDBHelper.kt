@@ -27,17 +27,16 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
     }
 
     @Throws(SQLiteConstraintException::class)
-    fun insertItem(item: ItemModel): Boolean {
+    fun insertItem(item: VolModel): Boolean {
         // Gets the data repository in write mode
         val db = writableDatabase
 
         // Create a new map of values, where column names are the keys
         val values = ContentValues()
-        values.put(DBContract.ItemEntry.COLUMN_ID, item.id)
-        values.put(DBContract.ItemEntry.COLUMN_NAME, item.name)
-        values.put(DBContract.ItemEntry.COLUMN_CATEGORY, item.category)
-        values.put(DBContract.ItemEntry.COLUMN_PRICE, item.price)
-        values.put(DBContract.ItemEntry.COLUMN_QUANTITY, item.quantity)
+        values.put(DBContract.ItemEntry.COLUMN_CODE, item.code)
+        values.put(DBContract.ItemEntry.COLUMN_DEPART, item.depart)
+        values.put(DBContract.ItemEntry.COLUMN_DESTINATION, item.destination)
+        values.put(DBContract.ItemEntry.COLUMN_TRANSPORTEUR, item.transporteur)
 
 
         // Insert the new row, returning the primary key value of the new row
@@ -51,7 +50,7 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         // Gets the data repository in write mode
         val db = writableDatabase
         // Define 'where' part of query.
-        val selection = DBContract.ItemEntry.COLUMN_ID + " LIKE ?"
+        val selection = DBContract.ItemEntry.COLUMN_CODE + " LIKE ?"
         // Specify arguments in placeholder order.
         val selectionArgs = arrayOf(id)
         // Issue SQL statement.
@@ -60,66 +59,93 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
         return true
     }
 
-    fun readItem(id: Int): ArrayList<ItemModel> {
-        val items = ArrayList<ItemModel>()
+    fun readItem(id: Int): ArrayList<VolModel> {
+        val items = ArrayList<VolModel>()
         val db = writableDatabase
         var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery("select * from " + DBContract.ItemEntry.TABLE_NAME + " WHERE " + DBContract.ItemEntry.COLUMN_ID + "='" + id + "'", null)
+            cursor = db.rawQuery("select * from " + DBContract.ItemEntry.TABLE_NAME + " WHERE " + DBContract.ItemEntry.COLUMN_CODE + "='" + id + "'", null)
         } catch (e: SQLiteException) {
             // if table not yet present, create it
             db.execSQL(SQL_CREATE_ENTRIES)
             return ArrayList()
         }
 
-        var id: Int
-        var name: String
-        var category: String
-        var price : Double
-        var quantity: Int
+        var code: Int
+        var destination: String
+        var depart : String
+        var transporteur: String
+
 
 
 
         if (cursor!!.moveToFirst()) {
-            while (cursor.isAfterLast == false) {
-                id = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_ID))
-                name = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_NAME))
-                category = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_CATEGORY))
-                price = cursor.getDouble(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_PRICE))
-                quantity = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_QUANTITY))
+            while (!cursor.isAfterLast) {
+                code = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_CODE))
+                depart = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_DEPART))
+                destination = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_DESTINATION))
+                transporteur = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_TRANSPORTEUR))
 
-                items.add(ItemModel(id, name, category, price, quantity))
+                items.add(VolModel(code, depart,  destination, transporteur))
                 cursor.moveToNext()
             }
         }
         return items
     }
 
-    fun searchByCategory(category : String): List<ItemModel>{
-        val items = ArrayList<ItemModel>()
+    fun searchByCategory(category : String): List<VolModel>{
+        val items = ArrayList<VolModel>()
         val db = writableDatabase
         var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery("select * from " + DBContract.ItemEntry.TABLE_NAME + " WHERE " + DBContract.ItemEntry.COLUMN_CATEGORY + " ='"+category+"'", null)
+            cursor = db.rawQuery("select * from " + DBContract.ItemEntry.TABLE_NAME + " WHERE " + DBContract.ItemEntry.COLUMN_TRANSPORTEUR + " ='"+category+"'", null)
         } catch (e: SQLiteException) {
             db.execSQL(SQL_CREATE_ENTRIES)
             return ArrayList()
         }
 
-        var id: Int
-        var name: String
-        var category: String
-        var price : Double
-        var quantity: Int
-        if (cursor!!.moveToFirst()) {
-            while (cursor.isAfterLast == false) {
-                id = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_ID))
-                name = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_NAME))
-                category = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_CATEGORY))
-                price = cursor.getDouble(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_PRICE))
-                quantity = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_QUANTITY))
+        var code: Int
+        var depart : String
+        var destination: String
+        var transporteur: String
 
-                items.add(ItemModel(id, name, category, price, quantity))
+        if (cursor!!.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                code = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_CODE))
+                depart = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_DEPART))
+                destination = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_DESTINATION))
+                transporteur = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_TRANSPORTEUR))
+
+                items.add(VolModel(code, depart, destination, transporteur))
+                cursor.moveToNext()
+            }
+        }
+        return items
+    }
+    fun searchByDepart(category : String): List<VolModel>{
+        val items = ArrayList<VolModel>()
+        val db = writableDatabase
+        var cursor: Cursor? = null
+        try {
+            cursor = db.rawQuery("select * from " + DBContract.ItemEntry.TABLE_NAME + " WHERE " + DBContract.ItemEntry.COLUMN_DEPART + " ='"+category+"'", null)
+        } catch (e: SQLiteException) {
+            db.execSQL(SQL_CREATE_ENTRIES)
+            return ArrayList()
+        }
+
+        var code: Int
+        var depart : String
+        var destination: String
+        var transporteur: String
+
+        if (cursor!!.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                code = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_CODE))
+                depart = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_DEPART))
+                destination = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_DESTINATION))
+                transporteur = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_TRANSPORTEUR))
+
+                items.add(VolModel(code, depart, destination, transporteur))
                 cursor.moveToNext()
             }
         }
@@ -129,9 +155,9 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
     fun readAllCategories(): ArrayList<String>{
         val categories = ArrayList<String>()
         val db = writableDatabase
-        var cursor : Cursor?
+        val cursor : Cursor?
             try {
-                cursor = db.rawQuery("select DISTINCT " + DBContract.ItemEntry.COLUMN_CATEGORY+ " from " + DBContract.ItemEntry.TABLE_NAME, null)
+                cursor = db.rawQuery("select DISTINCT " + DBContract.ItemEntry.COLUMN_TRANSPORTEUR+ " from " + DBContract.ItemEntry.TABLE_NAME, null)
             } catch (e: SQLiteException) {
                 db.execSQL(SQL_CREATE_ENTRIES)
                 return ArrayList()
@@ -140,8 +166,8 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
             var category: String
 
             if (cursor!!.moveToFirst()) {
-                while (cursor.isAfterLast == false) {
-                    category = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_CATEGORY))
+                while (!cursor.isAfterLast) {
+                    category = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_TRANSPORTEUR))
                     categories.add(category)
                     cursor.moveToNext()
                 }
@@ -149,8 +175,8 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
             return categories
         }
 
-    fun readAllItems(): ArrayList<ItemModel> {
-        val items = ArrayList<ItemModel>()
+    fun readAllItems(): ArrayList<VolModel> {
+        val items = ArrayList<VolModel>()
         val db = writableDatabase
         var cursor: Cursor? = null
         try {
@@ -160,47 +186,47 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
             return ArrayList()
         }
 
-        var id: Int
-        var name: String
-        var category: String
-        var price : Double
-        var quantity: Int
-        if (cursor!!.moveToFirst()) {
-            while (cursor.isAfterLast == false) {
-                id = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_ID))
-                name = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_NAME))
-                category = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_CATEGORY))
-                price = cursor.getDouble(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_PRICE))
-                quantity = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_QUANTITY))
+        var code: Int
+        var depart : String
+        var destination: String
+        var transporteur: String
 
-                items.add(ItemModel(id, name, category, price, quantity))
+        if (cursor!!.moveToFirst()) {
+            while (!cursor.isAfterLast) {
+                code = cursor.getInt(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_CODE))
+                depart = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_DEPART))
+                destination = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_DESTINATION))
+                transporteur = cursor.getString(cursor.getColumnIndex(DBContract.ItemEntry.COLUMN_TRANSPORTEUR))
+
+                items.add(VolModel(code, depart, destination, transporteur))
                 cursor.moveToNext()
             }
         }
         return items
     }
 
-    fun populateDB(db : SQLiteDatabase){
+    private fun populateDB(db : SQLiteDatabase){
         // Gets the data repository in write mode
 
-        val item1 = ItemModel(1, "Coke", "Drink", 1.50, 30)
-        val item2 = ItemModel(2, "Pepsi", "Drink", 1.45, 25)
-        val item3 = ItemModel(3, "Beef", "Food", 6.50, 5)
-        val item4 = ItemModel(4, "Fish", "Food", 7.75, 8)
-        val item5 = ItemModel(5,"Chicken","Food",4.50,12)
-        val item6 = ItemModel(6,"BBQ","Tools", 60.50, 2)
-        val item7 = ItemModel(7, "Charcoal", "Tools", 5.65, 20 )
+        val item1 = VolModel(1, "Montreal", "Quebec", "Limocar Laurentides")
+        val item2 = VolModel(2, "Montreal", "Paris", "Air France")
+        val item3 = VolModel(3, "Montreal", "New York", "Air Canada")
+        val item4 = VolModel(4, "Varsovie", "Montreal", "LOT")
+        val item5 = VolModel(5,"Montreal","New York","Air Canada")
+        val item6 = VolModel(6, "Montreal", "Paris", "Air Canada")
+        val item7 = VolModel(7, "Montreal", "New York", "Air Canada" )
+        val item8 = VolModel(8,"Montreal", "New York", "Pan Am")
+        val item9 = VolModel(8, "New York", "Montreal", "Voyageur")
 
-        val initialList : List<ItemModel> = listOf<ItemModel>(item1,item2,item3,item4,item5,item6,item7)
+        val initialList : List<VolModel> = listOf(item1,item2,item3,item4,item5,item6,item7,item8,item9)
 
         for (item in initialList) {
             // Create a new map of values, where column names are the keys
             val values = ContentValues()
-            values.put(DBContract.ItemEntry.COLUMN_ID, item.id)
-            values.put(DBContract.ItemEntry.COLUMN_NAME, item.name)
-            values.put(DBContract.ItemEntry.COLUMN_CATEGORY, item.category)
-            values.put(DBContract.ItemEntry.COLUMN_PRICE, item.price)
-            values.put(DBContract.ItemEntry.COLUMN_QUANTITY, item.quantity)
+            values.put(DBContract.ItemEntry.COLUMN_CODE, item.code)
+            values.put(DBContract.ItemEntry.COLUMN_DEPART, item.depart)
+            values.put(DBContract.ItemEntry.COLUMN_DESTINATION, item.destination)
+            values.put(DBContract.ItemEntry.COLUMN_TRANSPORTEUR, item.transporteur)
             // Insert the new row, returning the primary key value of the new row
             db.insertWithOnConflict(DBContract.ItemEntry.TABLE_NAME, null, values, 5)
         }
@@ -208,17 +234,15 @@ class ItemsDBHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME,
 
     companion object {
         // If you change the database schema, you must increment the database version.
-        val DATABASE_VERSION = 1
-        val DATABASE_NAME = "ItemsDB"
+        const val DATABASE_VERSION = 1
+        const val DATABASE_NAME = "voyagesDB"
 
         private val SQL_CREATE_ENTRIES =
             "CREATE TABLE IF NOT EXISTS " + DBContract.ItemEntry.TABLE_NAME + " (" +
-                    DBContract.ItemEntry.COLUMN_ID + " INTEGER PRIMARY KEY," +
-                    DBContract.ItemEntry.COLUMN_NAME + " TEXT," +
-                    DBContract.ItemEntry.COLUMN_CATEGORY + " TEXT," +
-                    DBContract.ItemEntry.COLUMN_PRICE + " REAL," +
-                    DBContract.ItemEntry.COLUMN_QUANTITY + " INTEGER," +
-                    "UNIQUE ("+DBContract.ItemEntry.COLUMN_ID+") ON CONFLICT REPLACE)"
+                    DBContract.ItemEntry.COLUMN_CODE + " INTEGER," +
+                    DBContract.ItemEntry.COLUMN_DEPART + " TEXT,"+
+                    DBContract.ItemEntry.COLUMN_DESTINATION + " TEXT," +
+                    DBContract.ItemEntry.COLUMN_TRANSPORTEUR + " TEXT)"
 
         private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + DBContract.ItemEntry.TABLE_NAME
     }

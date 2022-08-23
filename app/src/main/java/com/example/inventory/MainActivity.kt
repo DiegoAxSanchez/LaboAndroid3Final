@@ -15,7 +15,6 @@
  */
 package com.example.inventory
 
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController

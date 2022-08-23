@@ -21,10 +21,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.inventory.data.ItemModel
+import com.example.inventory.data.VolModel
 import com.example.inventory.databinding.FragmentItemDetailBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -33,7 +32,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
  */
 class ItemDetailFragment : Fragment() {
     private val navigationArgs: ItemDetailFragmentArgs by navArgs()
-    lateinit var item: ItemModel
+    lateinit var item: VolModel
 
 
     private var _binding: FragmentItemDetailBinding? = null
@@ -43,7 +42,7 @@ class ItemDetailFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentItemDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -51,28 +50,13 @@ class ItemDetailFragment : Fragment() {
     /**
      * Binds views with the passed in item data.
      */
-    private fun bind(item: ItemModel) {
+    private fun bind(item: VolModel) {
         binding.apply {
-            itemName.text = item.name
-            itemCategory.text = item.category
-            itemPrice.text = com.example.inventory.data.getFormattedPrice(item.price)
-            itemCount.text = item.quantity.toString()
+            itemName.text = item.code.toString()
+            itemCategory.text = item.depart
+            itemPrice.text = item.destination
+            itemCount.text = item.transporteur
             deleteItem.setOnClickListener { showConfirmationDialog() }
-        }
-    }
-
-    /**
-     * Navigate to the Edit item screen.
-     */
-    private fun editItem() {
-        val action = item.id?.let {
-            ItemDetailFragmentDirections.actionItemDetailFragmentToAddItemFragment(
-                getString(R.string.edit_fragment_title),
-                it
-            )
-        }
-        if (action != null) {
-            this.findNavController().navigate(action)
         }
     }
 
@@ -95,7 +79,7 @@ class ItemDetailFragment : Fragment() {
      * Deletes the current item and navigates to the list fragment.
      */
     private fun deleteItem() {
-        item.id?.let { MainActivity.itemsDBHelper.deleteItem(it.toString()) }
+        item.code?.let { MainActivity.itemsDBHelper.deleteItem(it.toString()) }
         findNavController().navigateUp()
     }
 

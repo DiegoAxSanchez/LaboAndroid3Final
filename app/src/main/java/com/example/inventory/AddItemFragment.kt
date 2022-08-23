@@ -24,10 +24,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.example.inventory.data.ItemModel
+import com.example.inventory.data.VolModel
 import com.example.inventory.databinding.FragmentAddItemBinding
 
 /**
@@ -39,7 +38,7 @@ class AddItemFragment : Fragment() {
     // to share the ViewModel across fragments.
     private val navigationArgs: ItemDetailFragmentArgs by navArgs()
 
-    lateinit var item: ItemModel
+    lateinit var item: VolModel
 
     // Binding object instance corresponding to the fragment_add_item.xml layout
     // This property is non-null between the onCreateView() and onDestroyView() lifecycle callbacks,
@@ -51,7 +50,7 @@ class AddItemFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentAddItemBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -71,13 +70,12 @@ class AddItemFragment : Fragment() {
     /**
      * Binds views with the passed in [item] information.
      */
-    private fun bind(item: ItemModel) {
-        val price = "%.2f".format(item.price)
+    private fun bind(item: VolModel) {
         binding.apply {
-            itemName.setText(item.name, TextView.BufferType.SPANNABLE)
-            itemCategory.setText(item.category, TextView.BufferType.SPANNABLE)
-            itemPrice.setText(price, TextView.BufferType.SPANNABLE)
-            itemCount.setText(item.quantity.toString(), TextView.BufferType.SPANNABLE)
+            itemName.setText(item.code!!, TextView.BufferType.SPANNABLE)
+            itemCategory.setText(item.depart, TextView.BufferType.SPANNABLE)
+            itemPrice.setText(item.destination, TextView.BufferType.SPANNABLE)
+            itemCount.setText(item.transporteur, TextView.BufferType.SPANNABLE)
             saveAction.setOnClickListener { updateItem() }
         }
     }
@@ -88,12 +86,11 @@ class AddItemFragment : Fragment() {
     private fun addNewItem() {
         if (isEntryValid()) {
             MainActivity.itemsDBHelper.insertItem(
-                ItemModel(
-                    null,
-                binding.itemName.text.toString(),
+                VolModel(
+                binding.itemName.text.toString().toInt(),
                 binding.itemCategory.text.toString(),
-                binding.itemPrice.text.toString().toDouble(),
-                binding.itemCount.text.toString().toInt(),)
+                binding.itemPrice.text.toString(),
+                binding.itemCount.text.toString(),)
             )
             val action = AddItemFragmentDirections.actionAddItemFragmentToItemListFragment()
             findNavController().navigate(action)
@@ -107,12 +104,11 @@ class AddItemFragment : Fragment() {
     private fun updateItem() {
         if (isEntryValid()) {
             MainActivity.itemsDBHelper.insertItem(
-                ItemModel(
-                this.navigationArgs.itemId,
-                this.binding.itemName.text.toString(),
+                VolModel(
+                this.binding.itemName.text.toString().toInt(),
                 this.binding.itemCategory.text.toString(),
-                this.binding.itemPrice.text.toString().toDouble(),
-                this.binding.itemCount.text.toString().toInt()
+                this.binding.itemPrice.text.toString(),
+                this.binding.itemCount.text.toString()
                 )
             )
             val action = AddItemFragmentDirections.actionAddItemFragmentToItemListFragment()

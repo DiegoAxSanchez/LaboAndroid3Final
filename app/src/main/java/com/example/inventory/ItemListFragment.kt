@@ -25,7 +25,7 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.inventory.data.ItemModel
+import com.example.inventory.data.VolModel
 import com.example.inventory.databinding.ItemListFragmentBinding
 
 /**
@@ -35,14 +35,14 @@ class ItemListFragment : Fragment() {
 
     private var _binding: ItemListFragmentBinding? = null
     private val binding get() = _binding!!
-    lateinit var items : List<ItemModel>
-    lateinit var categories : List<String>
+    lateinit var items : List<VolModel>
+    private lateinit var categories : List<String>
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 //        val entrees = File("res/raw/produits.txt").readLines()
 //        for (entree in entrees){
 //            val info: List<String> = entree.split(";")
@@ -57,7 +57,7 @@ class ItemListFragment : Fragment() {
 
         val adapter = ItemListAdapter {
             val action =
-                ItemListFragmentDirections.actionItemListFragmentToItemDetailFragment(it.id!!)
+                ItemListFragmentDirections.actionItemListFragmentToItemDetailFragment(it.code!!)
             this.findNavController().navigate(action)
         }
         binding.recyclerView.layoutManager = LinearLayoutManager(this.context)
@@ -70,7 +70,7 @@ class ItemListFragment : Fragment() {
                 adapter.submitList(it)
             }
 
-            categories = listOf<String>("") + MainActivity.itemsDBHelper.readAllCategories()
+            categories = listOf("") + MainActivity.itemsDBHelper.readAllCategories()
             categories.let {
                 // Create an ArrayAdapter using the string array and a default spinner layout
                 binding.categorySpinner.adapter =
@@ -84,13 +84,14 @@ class ItemListFragment : Fragment() {
             )
             this.findNavController().navigate(action)
         }
-        binding.btnTotal.setOnClickListener {
-            items = MainActivity.itemsDBHelper.readAllItems()
-                items.let {
-                    val newFragment = TotalFragment(items)
-                    newFragment.show(parentFragmentManager, "total")
+        binding.btnSearch.setOnClickListener {
+           val action = ItemListFragmentDirections.actionItemListFragmentToSearchItemFragment()
 
-            }
+        this.findNavController().navigate(action)
+        }
+        binding.btnDelete.setOnClickListener{
+            val action = ItemListFragmentDirections.actionItemListFragmentToDeleteItemFragment()
+            this.findNavController().navigate(action)
         }
         binding.categorySpinner.onItemSelectedListener= object :
             AdapterView.OnItemSelectedListener {
